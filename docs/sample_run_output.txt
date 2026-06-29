@@ -1,0 +1,75 @@
+===== CLIENT OUTPUT =====
+
+============================================================
+ STEP 0: Checking server is reachable
+============================================================
+Request:  GET http://127.0.0.1:5000/
+Status code: 200
+Response body: {'available_endpoints': {'GET /messages': 'Retrieve all messages', 'GET /messages/<id>': 'Retrieve a single message by id', 'GET /stats': 'Server statistics', 'POST /messages': 'Send a new message to the server'}, 'status': 'Server is running'}
+
+============================================================
+ STEP: Client sends a message from 'Caroline'
+============================================================
+Request:  POST http://127.0.0.1:5000/messages
+Request body: {'sender': 'Caroline', 'content': 'Hello server, this is my first message.'}
+Status code: 201
+Response body: {'data': {'content': 'Hello server, this is my first message.', 'id': 1, 'sender': 'Caroline'}, 'message': 'Message received and stored by server.', 'success': True}
+
+============================================================
+ STEP: Client sends a message from 'Caroline'
+============================================================
+Request:  POST http://127.0.0.1:5000/messages
+Request body: {'sender': 'Caroline', 'content': 'This is a second message to test multiple records.'}
+Status code: 201
+Response body: {'data': {'content': 'This is a second message to test multiple records.', 'id': 2, 'sender': 'Caroline'}, 'message': 'Message received and stored by server.', 'success': True}
+
+============================================================
+ STEP: Client requests all stored messages
+============================================================
+Request:  GET http://127.0.0.1:5000/messages
+Status code: 200
+Response body: {'count': 2, 'data': [{'content': 'This is a second message to test multiple records.', 'id': 2, 'sender': 'Caroline'}, {'content': 'Hello server, this is my first message.', 'id': 1, 'sender': 'Caroline'}], 'success': True}
+
+============================================================
+ STEP: Client requests message id=1
+============================================================
+Request:  GET http://127.0.0.1:5000/messages/1
+Status code: 200
+Response body: {'data': {'content': 'Hello server, this is my first message.', 'id': 1, 'sender': 'Caroline'}, 'success': True}
+
+============================================================
+ STEP: Client requests server stats
+============================================================
+Request:  GET http://127.0.0.1:5000/stats
+Status code: 200
+Response body: {'data': {'total_messages': 2}, 'success': True}
+
+============================================================
+ STEP: Client sends an INVALID message (missing content)
+============================================================
+Request:  POST http://127.0.0.1:5000/messages
+Request body: {'sender': 'Caroline'}
+Status code: 400
+Response body: {'error': "Field 'content' is required and must be text.", 'success': False}
+
+============================================================
+ DEMO COMPLETE: client-server communication successful
+============================================================
+
+===== SERVER LOG =====
+============================================================
+ Starting server on http://127.0.0.1:5000
+ Layers active: Presentation -> Business Logic -> Data
+============================================================
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [29/Jun/2026 16:34:36] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jun/2026 16:34:37] "POST /messages HTTP/1.1" 201 -
+127.0.0.1 - - [29/Jun/2026 16:34:37] "POST /messages HTTP/1.1" 201 -
+127.0.0.1 - - [29/Jun/2026 16:34:38] "GET /messages HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jun/2026 16:34:38] "GET /messages/1 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jun/2026 16:34:39] "GET /stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jun/2026 16:34:39] "POST /messages HTTP/1.1" 400 -
